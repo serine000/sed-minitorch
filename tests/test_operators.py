@@ -2,9 +2,9 @@ from collections.abc import Callable
 
 import pytest
 from hypothesis import given
-from hypothesis.control import assume
 from hypothesis.strategies import lists
 
+import minitorch
 from minitorch import MathTest
 from minitorch.operators import (
     add,
@@ -118,37 +118,45 @@ def test_sigmoid(a: float) -> None:
 @given(small_floats, small_floats, small_floats)
 def test_transitive(a: float, b: float, c: float) -> None:
     "Test the transitive property of less-than (a < b and b < c implies a < c)"
-    assume(a < b < c)
-    assert a < c
+    a, b, c = sorted([a, b, c])
+    if a < b < c:
+        assert a < c
 
 
 @pytest.mark.task0_2
-def test_symmetric() -> None:
+@given(small_floats, small_floats)
+def test_symmetric(a: float, b: float) -> None:
     """
     Write a test that ensures that :func:`minitorch.operators.mul` is symmetric, i.e.
     gives the same value regardless of the order of its input.
     """
-    # TODO: Implement for Task 0.2.
-    raise NotImplementedError("Need to implement for Task 0.2")
+    left = minitorch.operators.mul(a, b)
+    right = minitorch.operators.mul(b, a)
+    assert left == pytest.approx(right)
 
 
 @pytest.mark.task0_2
-def test_distribute() -> None:
+@given(small_floats, small_floats, small_floats)
+def test_distribute(a: float, b: float, z: float) -> None:
     r"""
     Write a test that ensures that your operators distribute, i.e.
     :math:`z \times (x + y) = z \times x + z \times y`
     """
-    # TODO: Implement for Task 0.2.
-    raise NotImplementedError("Need to implement for Task 0.2")
+    left = minitorch.operators.mul(z, minitorch.operators.add(a, b))
+    right = minitorch.operators.add(
+        minitorch.operators.mul(z, a), minitorch.operators.mul(z, b)
+    )
+
+    assert left == pytest.approx(right)
 
 
 @pytest.mark.task0_2
-def test_other() -> None:
+@given(small_floats)
+def test_other(a: float) -> None:
     """
     Write a test that ensures some other property holds for your functions.
     """
-    # TODO: Implement for Task 0.2.
-    raise NotImplementedError("Need to implement for Task 0.2")
+    assert minitorch.operators.eq(a, a) == 1.0
 
 
 # ## Task 0.3  - Higher-order functions
