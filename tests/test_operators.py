@@ -184,8 +184,10 @@ def test_sum_distribute(ls1: list[float], ls2: list[float]) -> None:
     Write a test that ensures that the sum of `ls1` plus the sum of `ls2`
     is the same as the sum of each element of `ls1` plus each element of `ls2`.
     """
-    # TODO: Implement for Task 0.3.
-    raise NotImplementedError("Need to implement for Task 0.3")
+    ls1_sum = minitorch.operators.sum(ls1)
+    ls2_sum = minitorch.operators.sum(ls2)
+    total_sum = ls1_sum + ls2_sum
+    assert total_sum == pytest.approx(minitorch.operators.sum(addLists(ls1, ls2)))
 
 
 @pytest.mark.task0_3
