@@ -1,7 +1,8 @@
-from typing import Callable, List, Tuple
+from collections.abc import Callable
 
 import pytest
 from hypothesis import given
+from hypothesis.control import assume
 from hypothesis.strategies import lists
 
 from minitorch import MathTest
@@ -107,16 +108,18 @@ def test_sigmoid(a: float) -> None:
     * It crosses 0 at 0.5
     * It is  strictly increasing.
     """
-    # TODO: Implement for Task 0.2.
-    raise NotImplementedError('Need to implement for Task 0.2')
+    assert 0.0 <= sigmoid(a) <= 1.0
+    assert (1 - sigmoid(a)) == pytest.approx(sigmoid(-a))
+    assert sigmoid(0) == 0.5
+    assert sigmoid(a) <= sigmoid(a + 1)
 
 
 @pytest.mark.task0_2
 @given(small_floats, small_floats, small_floats)
 def test_transitive(a: float, b: float, c: float) -> None:
     "Test the transitive property of less-than (a < b and b < c implies a < c)"
-    # TODO: Implement for Task 0.2.
-    raise NotImplementedError('Need to implement for Task 0.2')
+    assume(a < b < c)
+    assert a < c
 
 
 @pytest.mark.task0_2
@@ -126,7 +129,7 @@ def test_symmetric() -> None:
     gives the same value regardless of the order of its input.
     """
     # TODO: Implement for Task 0.2.
-    raise NotImplementedError('Need to implement for Task 0.2')
+    raise NotImplementedError("Need to implement for Task 0.2")
 
 
 @pytest.mark.task0_2
@@ -136,7 +139,7 @@ def test_distribute() -> None:
     :math:`z \times (x + y) = z \times x + z \times y`
     """
     # TODO: Implement for Task 0.2.
-    raise NotImplementedError('Need to implement for Task 0.2')
+    raise NotImplementedError("Need to implement for Task 0.2")
 
 
 @pytest.mark.task0_2
@@ -145,7 +148,7 @@ def test_other() -> None:
     Write a test that ensures some other property holds for your functions.
     """
     # TODO: Implement for Task 0.2.
-    raise NotImplementedError('Need to implement for Task 0.2')
+    raise NotImplementedError("Need to implement for Task 0.2")
 
 
 # ## Task 0.3  - Higher-order functions
@@ -168,18 +171,18 @@ def test_zip_with(a: float, b: float, c: float, d: float) -> None:
     lists(small_floats, min_size=5, max_size=5),
     lists(small_floats, min_size=5, max_size=5),
 )
-def test_sum_distribute(ls1: List[float], ls2: List[float]) -> None:
+def test_sum_distribute(ls1: list[float], ls2: list[float]) -> None:
     """
     Write a test that ensures that the sum of `ls1` plus the sum of `ls2`
     is the same as the sum of each element of `ls1` plus each element of `ls2`.
     """
     # TODO: Implement for Task 0.3.
-    raise NotImplementedError('Need to implement for Task 0.3')
+    raise NotImplementedError("Need to implement for Task 0.3")
 
 
 @pytest.mark.task0_3
 @given(lists(small_floats))
-def test_sum(ls: List[float]) -> None:
+def test_sum(ls: list[float]) -> None:
     assert_close(sum(ls), sum(ls))
 
 
@@ -191,7 +194,7 @@ def test_prod(x: float, y: float, z: float) -> None:
 
 @pytest.mark.task0_3
 @given(lists(small_floats))
-def test_negList(ls: List[float]) -> None:
+def test_negList(ls: list[float]) -> None:
     check = negList(ls)
     for i, j in zip(ls, check):
         assert_close(i, -j)
@@ -207,7 +210,7 @@ one_arg, two_arg, _ = MathTest._tests()
 
 @given(small_floats)
 @pytest.mark.parametrize("fn", one_arg)
-def test_one_args(fn: Tuple[str, Callable[[float], float]], t1: float) -> None:
+def test_one_args(fn: tuple[str, Callable[[float], float]], t1: float) -> None:
     name, base_fn = fn
     base_fn(t1)
 
@@ -215,7 +218,7 @@ def test_one_args(fn: Tuple[str, Callable[[float], float]], t1: float) -> None:
 @given(small_floats, small_floats)
 @pytest.mark.parametrize("fn", two_arg)
 def test_two_args(
-    fn: Tuple[str, Callable[[float, float], float]], t1: float, t2: float
+    fn: tuple[str, Callable[[float, float], float]], t1: float, t2: float
 ) -> None:
     name, base_fn = fn
     base_fn(t1, t2)
