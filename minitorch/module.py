@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import Any, Dict, Optional, Sequence, Tuple
+from collections.abc import Sequence
+from typing import Any
 
 
 class Module:
@@ -15,8 +16,8 @@ class Module:
 
     """
 
-    _modules: Dict[str, Module]
-    _parameters: Dict[str, Parameter]
+    _modules: dict[str, Module]
+    _parameters: dict[str, Parameter]
     training: bool
 
     def __init__(self) -> None:
@@ -26,20 +27,22 @@ class Module:
 
     def modules(self) -> Sequence[Module]:
         "Return the direct child modules of this module."
-        m: Dict[str, Module] = self.__dict__["_modules"]
+        m: dict[str, Module] = self.__dict__["_modules"]
         return list(m.values())
 
     def train(self) -> None:
         "Set the mode of this module and all descendent modules to `train`."
-        # TODO: Implement for Task 0.4.
-        raise NotImplementedError('Need to implement for Task 0.4')
+        modules = self.modules()
+        for module in modules:
+            module.training = True
 
     def eval(self) -> None:
         "Set the mode of this module and all descendent modules to `eval`."
-        # TODO: Implement for Task 0.4.
-        raise NotImplementedError('Need to implement for Task 0.4')
+        modules = self.modules()
+        for module in modules:
+            module.training = False
 
-    def named_parameters(self) -> Sequence[Tuple[str, Parameter]]:
+    def named_parameters(self) -> Sequence[tuple[str, Parameter]]:
         """
         Collect all the parameters of this module and its descendents.
 
@@ -47,13 +50,18 @@ class Module:
         Returns:
             The name and `Parameter` of each ancestor parameter.
         """
-        # TODO: Implement for Task 0.4.
-        raise NotImplementedError('Need to implement for Task 0.4')
+        parameters = []
+        modules = self.modules()
+        for module in modules:
+            params = [param for param in module._parameters.items()]
+            parameters.extend(params)
+
+        return parameters
 
     def parameters(self) -> Sequence[Parameter]:
         "Enumerate over all the parameters of this module and its descendents."
         # TODO: Implement for Task 0.4.
-        raise NotImplementedError('Need to implement for Task 0.4')
+        raise NotImplementedError("Need to implement for Task 0.4")
 
     def add_parameter(self, k: str, v: Any) -> Parameter:
         """
@@ -125,7 +133,7 @@ class Parameter:
     any value for testing.
     """
 
-    def __init__(self, x: Any, name: Optional[str] = None) -> None:
+    def __init__(self, x: Any, name: str | None = None) -> None:
         self.value = x
         self.name = name
         if hasattr(x, "requires_grad_"):
