@@ -8,7 +8,10 @@ dependencies = [
     "hypothesis>=6.168.0",
     "networkx>=3.6.1",
     "numba>=0.67.0",
+    "plotly>=7.1.0",
     "pytest>=9.1.1",
     "streamlit>=1.64.0",
+    "streamlit-ace>=0.1.1",
+    "torch>=2.14.0",
     "typing>=3.10.0.0",
 ]

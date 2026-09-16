@@ -14,4 +14,4 @@ For running test suites under a specific marker, run:
 ## Running Streamlit
 For running streamlit:
 - Make sure you're on the repository root dir: `sed-minitorch/` and not inside `project/` when trying to run streamlit
-- Run `python -m streamlit run project/app.py`
+- Run `python -m streamlit run project/app.py -- 0`
