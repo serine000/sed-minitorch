@@ -47,6 +47,7 @@ def test_stacked_demo() -> None:
     "Check that each of the properties match"
     mod = ModuleA1()
     np = dict(mod.named_parameters())
+    print(np)
 
     x = str(mod)
     print(x)

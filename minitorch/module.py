@@ -50,11 +50,23 @@ class Module:
         Returns:
             The name and `Parameter` of each ancestor parameter.
         """
-        parameters = []
+        parameters = [param for param in self._parameters.items()]
+
+        def visit_child_modules(module: Module, parameters_c, path):
+            renamed_params = {}
+            for key, val in module._parameters.items():
+                new_key = path + "." + key
+                renamed_params[new_key] = val
+
+            parameters_c.extend([param for param in renamed_params.items()])
+            for name, module_c in module.__dict__["_modules"].items():
+                name = path + "." + name
+                visit_child_modules(module_c, parameters_c, name)
+
         modules = self.modules()
-        for module in modules:
-            params = [param for param in module._parameters.items()]
-            parameters.extend(params)
+        names = list(self.__dict__["_modules"].keys())
+        for name, module in zip(names, modules):
+            visit_child_modules(module, parameters, name)
 
         return parameters
 
