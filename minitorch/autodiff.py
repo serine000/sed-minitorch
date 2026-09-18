@@ -1,7 +1,6 @@
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Any, Iterable, List, Tuple
-
-from typing_extensions import Protocol
+from typing import Any, Protocol
 
 # ## Task 1.1
 # Central Difference calculation
@@ -22,8 +21,17 @@ def central_difference(f: Any, *vals: Any, arg: int = 0, epsilon: float = 1e-6) 
     Returns:
         An approximation of $f'_i(x_0, \ldots, x_{n-1})$
     """
-    # TODO: Implement for Task 1.1.
-    raise NotImplementedError('Need to implement for Task 1.1')
+    new_vals = [0] * len(vals)
+    for idx, val in enumerate(vals):
+        if idx == arg:
+            new_vals[idx] = val + epsilon
+        else:
+            new_vals[idx] = val
+
+    print(vals)
+    print(new_vals)
+    derivative_value = (f(*new_vals) - f(*vals)) / epsilon
+    return derivative_value
 
 
 variable_count = 1
@@ -47,7 +55,7 @@ class Variable(Protocol):
     def parents(self) -> Iterable["Variable"]:
         pass
 
-    def chain_rule(self, d_output: Any) -> Iterable[Tuple["Variable", Any]]:
+    def chain_rule(self, d_output: Any) -> Iterable[tuple["Variable", Any]]:
         pass
 
 
@@ -62,7 +70,7 @@ def topological_sort(variable: Variable) -> Iterable[Variable]:
         Non-constant Variables in topological order starting from the right.
     """
     # TODO: Implement for Task 1.4.
-    raise NotImplementedError('Need to implement for Task 1.4')
+    raise NotImplementedError("Need to implement for Task 1.4")
 
 
 def backpropagate(variable: Variable, deriv: Any) -> None:
@@ -77,7 +85,7 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
     No return. Should write to its results to the derivative values of each leaf through `accumulate_derivative`.
     """
     # TODO: Implement for Task 1.4.
-    raise NotImplementedError('Need to implement for Task 1.4')
+    raise NotImplementedError("Need to implement for Task 1.4")
 
 
 @dataclass
@@ -87,7 +95,7 @@ class Context:
     """
 
     no_grad: bool = False
-    saved_values: Tuple[Any, ...] = ()
+    saved_values: tuple[Any, ...] = ()
 
     def save_for_backward(self, *values: Any) -> None:
         "Store the given `values` if they need to be used during backpropagation."
@@ -96,5 +104,5 @@ class Context:
         self.saved_values = values
 
     @property
-    def saved_tensors(self) -> Tuple[Any, ...]:
+    def saved_tensors(self) -> tuple[Any, ...]:
         return self.saved_values
