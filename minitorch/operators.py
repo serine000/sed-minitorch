@@ -25,6 +25,11 @@ def add(x: float, y: float) -> float:
     return x + y
 
 
+def sub(x: float, y: float) -> float:
+    "$f(x, y) = x - y$"
+    return x - y
+
+
 def neg(x: float) -> float:
     "$f(x) = -x$"
     return -1 * x
@@ -33,6 +38,11 @@ def neg(x: float) -> float:
 def lt(x: float, y: float) -> float:
     "$f(x) =$ 1.0 if x is less than y else 0.0"
     return 1.0 if x < y else 0.0
+
+
+def gt(x: float, y: float) -> float:
+    "$f(x) =$ 1.0 if x is less than y else 0.0"
+    return 1.0 if x > y else 0.0
 
 
 def eq(x: float, y: float) -> float:

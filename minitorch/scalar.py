@@ -1,13 +1,15 @@
 from __future__ import annotations
 
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
-from typing import Any, Iterable, Optional, Sequence, Tuple, Type, Union
+from typing import Any, Union
 
 import numpy as np
 
 from .autodiff import Context, Variable, backpropagate, central_difference
 from .scalar_functions import (
     EQ,
+    GT,
     LT,
     Add,
     Exp,
@@ -18,6 +20,7 @@ from .scalar_functions import (
     ReLU,
     ScalarFunction,
     Sigmoid,
+    Sub,
 )
 
 ScalarLike = Union[float, int, "Scalar"]
@@ -36,8 +39,8 @@ class ScalarHistory:
 
     """
 
-    last_fn: Optional[Type[ScalarFunction]] = None
-    ctx: Optional[Context] = None
+    last_fn: type[ScalarFunction] | None = None
+    ctx: Context | None = None
     inputs: Sequence[Scalar] = ()
 
 
@@ -56,8 +59,8 @@ class Scalar:
     `ScalarFunction`.
     """
 
-    history: Optional[ScalarHistory]
-    derivative: Optional[float]
+    history: ScalarHistory | None
+    derivative: float | None
     data: float
     unique_id: int
     name: str
@@ -66,7 +69,7 @@ class Scalar:
         self,
         v: float,
         back: ScalarHistory = ScalarHistory(),
-        name: Optional[str] = None,
+        name: str | None = None,
     ):
         global _var_count
         _var_count += 1
@@ -92,31 +95,25 @@ class Scalar:
         return Mul.apply(b, Inv.apply(self))
 
     def __add__(self, b: ScalarLike) -> Scalar:
-        # TODO: Implement for Task 1.2.
-        raise NotImplementedError('Need to implement for Task 1.2')
+        return Add.apply(self, b)
 
     def __bool__(self) -> bool:
         return bool(self.data)
 
     def __lt__(self, b: ScalarLike) -> Scalar:
-        # TODO: Implement for Task 1.2.
-        raise NotImplementedError('Need to implement for Task 1.2')
+        return LT.apply(self, b)
 
     def __gt__(self, b: ScalarLike) -> Scalar:
-        # TODO: Implement for Task 1.2.
-        raise NotImplementedError('Need to implement for Task 1.2')
+        return GT.apply(self, b)
 
     def __eq__(self, b: ScalarLike) -> Scalar:  # type: ignore[override]
-        # TODO: Implement for Task 1.2.
-        raise NotImplementedError('Need to implement for Task 1.2')
+        return EQ.apply(self, b)
 
     def __sub__(self, b: ScalarLike) -> Scalar:
-        # TODO: Implement for Task 1.2.
-        raise NotImplementedError('Need to implement for Task 1.2')
+        return Sub.apply(self, b)
 
     def __neg__(self) -> Scalar:
-        # TODO: Implement for Task 1.2.
-        raise NotImplementedError('Need to implement for Task 1.2')
+        return Neg.apply(self)
 
     def __radd__(self, b: ScalarLike) -> Scalar:
         return self + b
@@ -125,20 +122,16 @@ class Scalar:
         return self * b
 
     def log(self) -> Scalar:
-        # TODO: Implement for Task 1.2.
-        raise NotImplementedError('Need to implement for Task 1.2')
+        return Log.apply(self)
 
     def exp(self) -> Scalar:
-        # TODO: Implement for Task 1.2.
-        raise NotImplementedError('Need to implement for Task 1.2')
+        return Exp.apply(self)
 
     def sigmoid(self) -> Scalar:
-        # TODO: Implement for Task 1.2.
-        raise NotImplementedError('Need to implement for Task 1.2')
+        return Sigmoid.apply(self)
 
     def relu(self) -> Scalar:
-        # TODO: Implement for Task 1.2.
-        raise NotImplementedError('Need to implement for Task 1.2')
+        return ReLU.apply(self)
 
     # Variable elements for backprop
 
@@ -167,16 +160,16 @@ class Scalar:
         assert self.history is not None
         return self.history.inputs
 
-    def chain_rule(self, d_output: Any) -> Iterable[Tuple[Variable, Any]]:
+    def chain_rule(self, d_output: Any) -> Iterable[tuple[Variable, Any]]:
         h = self.history
         assert h is not None
         assert h.last_fn is not None
         assert h.ctx is not None
 
         # TODO: Implement for Task 1.3.
-        raise NotImplementedError('Need to implement for Task 1.3')
+        raise NotImplementedError("Need to implement for Task 1.3")
 
-    def backward(self, d_output: Optional[float] = None) -> None:
+    def backward(self, d_output: float | None = None) -> None:
         """
         Calls autodiff to fill in the derivatives for the history of this object.
 
