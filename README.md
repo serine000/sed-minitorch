@@ -1,6 +1,7 @@
 # Sed minitorch
 
-This is my own minitorch implementation
+This is my own minitorch implementation.
+It's a smaller more basic version of the Torch library
 
 
 ## Description
