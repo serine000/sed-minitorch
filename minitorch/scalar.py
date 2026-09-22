@@ -161,6 +161,15 @@ class Scalar:
         return self.history.inputs
 
     def chain_rule(self, d_output: Any) -> Iterable[tuple[Variable, Any]]:
+        """
+        Given the derivative calculated already from ahead 'd_output' generate the previous
+        derivatives from d_output and backwards.
+        so if y = x + z
+        dL/dy = 5
+        We still want dL/dx and dL/dz such that:
+        dL/dx = dL/dy(5) * dy/dx(call backwards on it and it will know how to fetch them.)
+        """
+
         h = self.history
         assert h is not None
         assert h.last_fn is not None
