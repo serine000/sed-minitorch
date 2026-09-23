@@ -23,3 +23,9 @@ These are some of the functional changes I did to the original codes because of 
 (You can find the corrected plain version of this repo to follow the guides with on <>.)
 - Replace any instance of `st.cache` with `st.cache_data`
 - Modern Streamlit gives elements IDs based on their type/parameters and rejects duplicate IDs unless you provide unique key= values.
+
+
+## Concepts included
+- Chain rule
+- Scalar abstraction
+- Backpropagation
