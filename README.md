@@ -3,7 +3,6 @@
 This is my own minitorch implementation.
 It's a smaller more basic version of the Torch library
 
-
 ## Description
 This is a minitiature version implementation of the Torch library.
 It starts from the basic python library operations and higher order functions.
