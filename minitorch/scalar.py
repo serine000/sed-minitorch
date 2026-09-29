@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable
 from dataclasses import dataclass
 from typing import Any, Union
 
 import numpy as np
 
-from .autodiff import Context, Variable, backpropagate, central_difference
+from .autodiff import Variable, backpropagate, central_difference
 from .scalar_functions import (
     EQ,
     GT,
@@ -18,7 +18,6 @@ from .scalar_functions import (
     Mul,
     Neg,
     ReLU,
-    ScalarFunction,
     Sigmoid,
     Sub,
 )
@@ -38,10 +37,6 @@ class ScalarHistory:
         inputs : The inputs that were given when `last_fn.forward` was called.
 
     """
-
-    last_fn: type[ScalarFunction] | None = None
-    ctx: Context | None = None
-    inputs: Sequence[Scalar] = ()
 
 
 # ## Task 1.2 and 1.4

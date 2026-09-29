@@ -122,6 +122,16 @@ def relu_back(x: float, d: float) -> float:
     return d * (x > 0)
 
 
+def sigmoid_back(x: float, d: float) -> float:
+    r"""Derivative of the sigmoid function"""
+    return d * sigmoid(x) * (1 - sigmoid(x))
+
+
+def exp_back(x: float, d: float) -> float:
+    r"""Derivative of the exponential function"""
+    return math.exp(x) * d
+
+
 # ## Task 0.3
 
 # Small practice library of elementary higher-order functions.
