@@ -1,4 +1,4 @@
-from collections import defaultdict, deque
+from collections import deque
 from collections.abc import Iterable
 from dataclasses import dataclass
 from typing import Any, Protocol
@@ -88,6 +88,20 @@ def regular_topoligcal_sort(graph):
     return res if len(res) == len(graph) else 0
 
 
+def topological_sort_visitor(variable: Variable, stack, visited_nodes):
+    """DFS traversal approach for going through the graph."""
+
+    if variable.unique_id in visited_nodes:
+        return
+
+    visited_nodes.add(variable.unique_id)
+
+    for parent in variable.parents:
+        topological_sort_visitor(parent, stack, visited_nodes)
+
+    stack.append(variable)
+
+
 def topological_sort(variable: Variable) -> Iterable[Variable]:
     """
     Computes the topological order of the computation graph.
@@ -98,34 +112,13 @@ def topological_sort(variable: Variable) -> Iterable[Variable]:
     Returns:
         Non-constant Variables in topological order starting from the right.
     """
-    # Graph discovery
-    res = []
-    graph = [variable]
-    q = deque()
-    children = defaultdict(list)
 
-    for var in graph:
-        for parent in var.parents:
-            children[parent].append(var)
-            if parent.is_leaf():
-                q.append(parent)
-            graph.append(parent)
+    stack: Iterable[Variable] = []
+    visited_nodes: set[int] = set()
 
-    # Filling indegrees
-    indegree = {node: 0 for node in graph}
-    for node in graph:
-        indegree[node] = len(node.parents)
+    topological_sort_visitor(variable, stack, visited_nodes)
 
-    # Traversal
-    while len(q) > 0:
-        node = q.popleft()
-        res.append(node)
-        for child in children[node]:
-            indegree[child] -= 1
-            if indegree[child] == 0:
-                q.append(child)
-
-    return res
+    return reversed(stack)
 
 
 def backpropagate(variable: Variable, deriv: Any) -> None:
