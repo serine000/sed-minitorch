@@ -1,3 +1,4 @@
+from collections import defaultdict, deque
 from collections.abc import Iterable
 from dataclasses import dataclass
 from typing import Any, Protocol
@@ -59,6 +60,34 @@ class Variable(Protocol):
         pass
 
 
+def generate_indegree(graph):
+    indegree = {node: 0 for node in graph}
+    for n in graph:
+        for neighbor in n:
+            indegree[neighbor] += 1
+    return indegree
+
+
+def regular_topoligcal_sort(graph):
+    q = deque()
+    res = []
+    indegree = generate_indegree(graph)
+
+    for n in graph:
+        if indegree[n] == 0:
+            q.append(n)
+
+    while len(q) > 0:
+        node = q.popleft()
+        res.append(node)
+        for neighbor in graph[node]:
+            indegree[neighbor] -= 1
+            if indegree[neighbor] == 0:
+                q.append(neighbor)
+
+    return res if len(res) == len(graph) else 0
+
+
 def topological_sort(variable: Variable) -> Iterable[Variable]:
     """
     Computes the topological order of the computation graph.
@@ -69,8 +98,34 @@ def topological_sort(variable: Variable) -> Iterable[Variable]:
     Returns:
         Non-constant Variables in topological order starting from the right.
     """
-    # TODO: Implement for Task 1.4.
-    raise NotImplementedError("Need to implement for Task 1.4")
+    # Graph discovery
+    res = []
+    graph = [variable]
+    q = deque()
+    children = defaultdict(list)
+
+    for var in graph:
+        for parent in var.parents:
+            children[parent].append(var)
+            if parent.is_leaf():
+                q.append(parent)
+            graph.append(parent)
+
+    # Filling indegrees
+    indegree = {node: 0 for node in graph}
+    for node in graph:
+        indegree[node] = len(node.parents)
+
+    # Traversal
+    while len(q) > 0:
+        node = q.popleft()
+        res.append(node)
+        for child in children[node]:
+            indegree[child] -= 1
+            if indegree[child] == 0:
+                q.append(child)
+
+    return res
 
 
 def backpropagate(variable: Variable, deriv: Any) -> None:

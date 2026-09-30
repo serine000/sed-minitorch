@@ -162,7 +162,7 @@ class Scalar:
         so if y = x + z
         dL/dy = 5
         We still want dL/dx and dL/dz such that:
-        dL/dx = dL/dy(5) * dy/dx(call backwards on it and it will know how to fetch them.)
+        dL/dx = dL/dy(5) * dy/dx (call backwards on it and it will know how to fetch them.)
         """
 
         h = self.history
