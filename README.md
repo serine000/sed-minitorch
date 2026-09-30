@@ -28,3 +28,4 @@ These are some of the functional changes I did to the original codes because of 
 - Chain rule
 - Scalar abstraction
 - Backpropagation
+- Topological sort
