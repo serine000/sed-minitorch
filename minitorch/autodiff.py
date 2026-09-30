@@ -133,17 +133,19 @@ def backpropagate(variable: Variable, deriv: Any) -> None:
     No return. Should write to its results to the derivative values of each leaf through `accumulate_derivative`.
     """
     order = topological_sort(variable)
-    accumulated_derivatives = {variable: deriv}
+    accumulated_derivatives = {variable.unique_id: deriv}
 
     for node in order:
         if node.is_leaf():
-            node.accumulate_derivative(accumulated_derivatives[node])
+            node.accumulate_derivative(accumulated_derivatives[node.unique_id])
             continue
-        for parent, derivative in node.chain_rule(accumulated_derivatives[node]):
-            if parent in accumulated_derivatives:
-                accumulated_derivatives[parent] += derivative
+        for parent, derivative in node.chain_rule(
+            accumulated_derivatives[node.unique_id]
+        ):
+            if parent.unique_id in accumulated_derivatives:
+                accumulated_derivatives[parent.unique_id] += derivative
             else:
-                accumulated_derivatives[parent] = derivative
+                accumulated_derivatives[parent.unique_id] = derivative
 
 
 @dataclass

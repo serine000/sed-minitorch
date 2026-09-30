@@ -203,7 +203,7 @@ class LT(ScalarFunction):
 
     @staticmethod
     def backward(ctx: Context, d_output: float) -> tuple[float, float]:
-        return d_output, d_output
+        return 0.0, 0.0
 
 
 class GT(ScalarFunction):
@@ -215,7 +215,7 @@ class GT(ScalarFunction):
 
     @staticmethod
     def backward(ctx: Context, d_output: float) -> tuple[float, float]:
-        return d_output, d_output
+        return 0.0, 0.0
 
 
 class EQ(ScalarFunction):
@@ -227,4 +227,4 @@ class EQ(ScalarFunction):
 
     @staticmethod
     def backward(ctx: Context, d_output: float) -> tuple[float, float]:
-        return d_output, d_output
+        return 0.0, 0.0
