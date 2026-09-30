@@ -38,6 +38,10 @@ class ScalarHistory:
 
     """
 
+    last_fn: Any = None
+    ctx: Any = None
+    inputs: Any = ()
+
 
 # ## Task 1.2 and 1.4
 # Scalar Forward and Backward
