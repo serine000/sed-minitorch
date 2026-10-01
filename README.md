@@ -29,3 +29,14 @@ These are some of the functional changes I did to the original codes because of 
 - Scalar abstraction
 - Backpropagation
 - Topological sort
+
+## Steps summarized
+- Defining basic operations
+- Defining higher order utility functions (from scratch)
+- Defining Modules and Parameters
+- Implementing differentiation
+- Defining Scalar & ScalarHistory + operation Context
+- Defining the forward and backward of every operation
+- Implementing topological sort ordering
+- Implementing the Chain Rule mechanism
+- Imeplementing Backpropagation
