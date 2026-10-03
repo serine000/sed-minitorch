@@ -62,8 +62,15 @@ def to_index(ordinal: int, shape: Shape, out_index: OutIndex) -> None:
         out_index : return index corresponding to position.
 
     """
-    # TODO: Implement for Task 2.1.
-    raise NotImplementedError("Need to implement for Task 2.1")
+    h, w = shape
+    i, j = 0, 0
+    while ordinal >= w:
+        ordinal -= w
+        i += 1
+    j = ordinal
+
+    out_index[0] = i
+    out_index[1] = j
 
 
 def broadcast_index(
