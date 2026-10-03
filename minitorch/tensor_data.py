@@ -1,13 +1,14 @@
 from __future__ import annotations
 
+import builtins
 import random
-from typing import Iterable, Optional, Sequence, Tuple, Union
+from collections.abc import Iterable, Sequence
+from typing import TypeAlias
 
 import numba
 import numpy as np
 import numpy.typing as npt
 from numpy import array, float64
-from typing_extensions import TypeAlias
 
 from .operators import prod
 
@@ -16,7 +17,6 @@ MAX_DIMS = 32
 
 class IndexingError(RuntimeError):
     "Exception raised for indexing errors."
-    pass
 
 
 Storage: TypeAlias = npt.NDArray[np.float64]
@@ -42,9 +42,11 @@ def index_to_position(index: Index, strides: Strides) -> int:
     Returns:
         Position in storage
     """
+    position = 0
+    for i, s in zip(index, strides):
+        position += i * s
 
-    # TODO: Implement for Task 2.1.
-    raise NotImplementedError('Need to implement for Task 2.1')
+    return position
 
 
 def to_index(ordinal: int, shape: Shape, out_index: OutIndex) -> None:
@@ -61,7 +63,7 @@ def to_index(ordinal: int, shape: Shape, out_index: OutIndex) -> None:
 
     """
     # TODO: Implement for Task 2.1.
-    raise NotImplementedError('Need to implement for Task 2.1')
+    raise NotImplementedError("Need to implement for Task 2.1")
 
 
 def broadcast_index(
@@ -84,7 +86,7 @@ def broadcast_index(
         None
     """
     # TODO: Implement for Task 2.2.
-    raise NotImplementedError('Need to implement for Task 2.2')
+    raise NotImplementedError("Need to implement for Task 2.2")
 
 
 def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
@@ -102,7 +104,7 @@ def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
         IndexingError : if cannot broadcast
     """
     # TODO: Implement for Task 2.2.
-    raise NotImplementedError('Need to implement for Task 2.2')
+    raise NotImplementedError("Need to implement for Task 2.2")
 
 
 def strides_from_shape(shape: UserShape) -> UserStrides:
@@ -124,9 +126,9 @@ class TensorData:
 
     def __init__(
         self,
-        storage: Union[Sequence[float], Storage],
+        storage: Sequence[float] | Storage,
         shape: UserShape,
-        strides: Optional[UserStrides] = None,
+        strides: UserStrides | None = None,
     ):
         if isinstance(storage, np.ndarray):
             self._storage = storage
@@ -170,7 +172,7 @@ class TensorData:
     def shape_broadcast(shape_a: UserShape, shape_b: UserShape) -> UserShape:
         return shape_broadcast(shape_a, shape_b)
 
-    def index(self, index: Union[int, UserIndex]) -> int:
+    def index(self, index: int | UserIndex) -> int:
         if isinstance(index, int):
             aindex: Index = array([index])
         if isinstance(index, tuple):
@@ -201,7 +203,7 @@ class TensorData:
             yield tuple(out_index)
 
     def sample(self) -> UserIndex:
-        return tuple((random.randint(0, s - 1) for s in self.shape))
+        return tuple(random.randint(0, s - 1) for s in self.shape)
 
     def get(self, key: UserIndex) -> float:
         x: float = self._storage[self.index(key)]
@@ -210,7 +212,7 @@ class TensorData:
     def set(self, key: UserIndex, val: float) -> None:
         self._storage[self.index(key)] = val
 
-    def tuple(self) -> Tuple[Storage, Shape, Strides]:
+    def tuple(self) -> builtins.tuple[Storage, Shape, Strides]:
         return (self._storage, self._shape, self._strides)
 
     def permute(self, *order: int) -> TensorData:
@@ -223,12 +225,12 @@ class TensorData:
         Returns:
             New `TensorData` with the same storage and a new dimension order.
         """
-        assert list(sorted(order)) == list(
+        assert sorted(order) == list(
             range(len(self.shape))
         ), f"Must give a position to each dimension. Shape: {self.shape} Order: {order}"
 
         # TODO: Implement for Task 2.1.
-        raise NotImplementedError('Need to implement for Task 2.1')
+        raise NotImplementedError("Need to implement for Task 2.1")
 
     def to_string(self) -> str:
         s = ""
