@@ -109,19 +109,6 @@ def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
     len_shape1 = len(shape1)
     len_shape2 = len(shape2)
 
-    if len_shape1 == len_shape2:
-        idx = len_shape1 - 1
-        res = [0] * len_shape1
-        while idx >= -1:
-            if shape1[idx] == 1:
-                res[idx] = shape2[idx]
-            elif shape2[idx] == 1:
-                res[idx] = shape1[idx]
-            else:
-                raise IndexingError("Cannot perform broadcasting")
-            idx -= 1
-        return tuple(res)
-
     big_len = max(len_shape1, len_shape2)
     little_len = min(len_shape1, len_shape2)
     if len_shape1 > len_shape2:
@@ -132,27 +119,18 @@ def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
         little_shape = shape1
     diff = big_len - little_len
 
-    while diff:
-        little_shape = [1] + list(little_shape)
-        diff -= 1
+    little_shape = [1] * diff + list(little_shape)
 
-    res = [0] * big_len
-    idx = big_len - 1
+    res = []
+    idx = 0
 
-    print(big_shape)
-    print(little_shape)
-
-    while idx >= -1:
-        print(f"Res: {res}")
-        if big_shape[idx] == 1:
-            res[idx] = little_shape[idx]
-        elif little_shape[idx] == 1:
-            res[idx] = big_shape[idx]
-        elif little_shape[idx] == big_shape[idx]:
-            res[idx] = little_shape[idx]
+    for a, b in zip(big_shape, little_shape):
+        if a == 1:
+            res.append(b)
+        elif b == 1 or a == b:
+            res.append(a)
         else:
             raise IndexingError("Cannot perform broadcasting")
-        idx -= 1
     return tuple(res)
 
 
