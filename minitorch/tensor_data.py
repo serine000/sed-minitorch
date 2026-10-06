@@ -232,8 +232,17 @@ class TensorData:
             range(len(self.shape))
         ), f"Must give a position to each dimension. Shape: {self.shape} Order: {order}"
 
-        # TODO: Implement for Task 2.1.
-        raise NotImplementedError("Need to implement for Task 2.1")
+        new_shape = [0] * len(order)
+        new_stride = [0] * len(order)
+
+        for i, dim in enumerate(order):
+            new_shape[i] = self.shape[dim]
+            new_stride[i] = self.strides[dim]
+
+        new_tensor = TensorData(
+            storage=self._storage, shape=tuple(new_shape), strides=tuple(new_stride)
+        )
+        return new_tensor
 
     def to_string(self) -> str:
         s = ""
