@@ -88,8 +88,15 @@ def broadcast_index(
     Returns:
         None
     """
-    # TODO: Implement for Task 2.2.
-    raise NotImplementedError("Need to implement for Task 2.2")
+    idx = -1
+    k = len(shape)
+    while k:
+        if shape[idx] == 1:
+            out_index[idx] = 0
+        else:
+            out_index[idx] = big_index[idx]
+        k -= 1
+        idx -= 1
 
 
 def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
@@ -122,7 +129,6 @@ def shape_broadcast(shape1: UserShape, shape2: UserShape) -> UserShape:
     little_shape = [1] * diff + list(little_shape)
 
     res = []
-    idx = 0
 
     for a, b in zip(big_shape, little_shape):
         if a == 1:
