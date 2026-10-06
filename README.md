@@ -40,3 +40,4 @@ These are some of the functional changes I did to the original codes because of 
 - Implementing topological sort ordering
 - Implementing the Chain Rule mechanism
 - Imeplementing Backpropagation
+- Tensor operations implementation
