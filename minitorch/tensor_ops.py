@@ -1,27 +1,21 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Optional, Type
-
-import numpy as np
-from typing_extensions import Protocol
+import math
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Protocol
 
 from . import operators
 from .tensor_data import (
-    MAX_DIMS,
-    broadcast_index,
-    index_to_position,
     shape_broadcast,
-    to_index,
 )
 
 if TYPE_CHECKING:
     from .tensor import Tensor
-    from .tensor_data import Index, Shape, Storage, Strides
+    from .tensor_data import Shape, Storage, Strides
 
 
 class MapProto(Protocol):
-    def __call__(self, x: Tensor, out: Optional[Tensor] = ..., /) -> Tensor:
-        ...
+    def __call__(self, x: Tensor, out: Tensor | None = ..., /) -> Tensor: ...
 
 
 class TensorOps:
@@ -51,7 +45,7 @@ class TensorOps:
 
 
 class TensorBackend:
-    def __init__(self, ops: Type[TensorOps]):
+    def __init__(self, ops: type[TensorOps]):
         """
         Dynamically construct a tensor backend based on a `tensor_ops` object
         that implements map, zip, and reduce higher-order functions.
@@ -126,7 +120,7 @@ class SimpleOps(TensorOps):
 
         f = tensor_map(fn)
 
-        def ret(a: Tensor, out: Optional[Tensor] = None) -> Tensor:
+        def ret(a: Tensor, out: Tensor | None = None) -> Tensor:
             if out is None:
                 out = a.zeros(a.shape)
             f(*out.tuple(), *a.tuple())
@@ -135,9 +129,7 @@ class SimpleOps(TensorOps):
         return ret
 
     @staticmethod
-    def zip(
-        fn: Callable[[float, float], float]
-    ) -> Callable[["Tensor", "Tensor"], "Tensor"]:
+    def zip(fn: Callable[[float, float], float]) -> Callable[[Tensor, Tensor], Tensor]:
         """
         Higher-order tensor zip function ::
 
@@ -168,7 +160,7 @@ class SimpleOps(TensorOps):
 
         f = tensor_zip(fn)
 
-        def ret(a: "Tensor", b: "Tensor") -> "Tensor":
+        def ret(a: Tensor, b: Tensor) -> Tensor:
             if a.shape != b.shape:
                 c_shape = shape_broadcast(a.shape, b.shape)
             else:
@@ -182,7 +174,7 @@ class SimpleOps(TensorOps):
     @staticmethod
     def reduce(
         fn: Callable[[float, float], float], start: float = 0.0
-    ) -> Callable[["Tensor", int], "Tensor"]:
+    ) -> Callable[[Tensor, int], Tensor]:
         """
         Higher-order tensor reduce function. ::
 
@@ -207,7 +199,7 @@ class SimpleOps(TensorOps):
         """
         f = tensor_reduce(fn)
 
-        def ret(a: "Tensor", dim: int) -> "Tensor":
+        def ret(a: Tensor, dim: int) -> Tensor:
             out_shape = list(a.shape)
             out_shape[dim] = 1
 
@@ -221,7 +213,7 @@ class SimpleOps(TensorOps):
         return ret
 
     @staticmethod
-    def matrix_multiply(a: "Tensor", b: "Tensor") -> "Tensor":
+    def matrix_multiply(a: Tensor, b: Tensor) -> Tensor:
         raise NotImplementedError("Not implemented in this assignment")
 
     is_cuda = False
@@ -249,6 +241,11 @@ def tensor_map(
       value of `in_storage` assuming `out_shape` and `in_shape`
       broadcast. (`in_shape` must be smaller than `out_shape`).
 
+    Summarized explanation:
+
+    * tensor_map loops over every empty box in the output and asks,
+      "Which input value should fill this box after applying fn?
+
     Args:
         fn: function from float-to-float to apply
 
@@ -264,8 +261,7 @@ def tensor_map(
         in_shape: Shape,
         in_strides: Strides,
     ) -> None:
-        # TODO: Implement for Task 2.3.
-        raise NotImplementedError('Need to implement for Task 2.3')
+        total_output_elements = math.prod(out_shape)
 
     return _map
 
@@ -310,7 +306,7 @@ def tensor_zip(
         b_strides: Strides,
     ) -> None:
         # TODO: Implement for Task 2.3.
-        raise NotImplementedError('Need to implement for Task 2.3')
+        raise NotImplementedError("Need to implement for Task 2.3")
 
     return _zip
 
@@ -341,7 +337,7 @@ def tensor_reduce(
         reduce_dim: int,
     ) -> None:
         # TODO: Implement for Task 2.3.
-        raise NotImplementedError('Need to implement for Task 2.3')
+        raise NotImplementedError("Need to implement for Task 2.3")
 
     return _reduce
 
