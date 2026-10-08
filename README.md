@@ -41,3 +41,7 @@ These are some of the functional changes I did to the original codes because of 
 - Implementing the Chain Rule mechanism
 - Imeplementing Backpropagation
 - Tensor operations implementation
+
+## Tensor operations
+- Reduce
+- Map
