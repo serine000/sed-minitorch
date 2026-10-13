@@ -52,3 +52,12 @@ For indexing we want to be able to move around the tensor and fetch our data fro
 [Important note: They're not _exactly_ opposites since `to_index` uses shape, while `index_to_position` uses strides.]
 
 - `permute`: THe purpose of this function is to rearrange the dimensions of a tensor without rearranging the actual data in storage. This operation is equivalent to _transposing_ a matrix. When we permute, we generate a new shape and stride for our data. We also change the stride because each stride belongs to a specific dimension. When that dimension moves, its stride must move with it.
+
+### Broadcasting
+Broadcasting in general is about performing an operation between two tensors of different shapes. It allows us to perform these operations between differently shaped tensors without explicitly copying or expanding their data.
+
+- `shape_broadcast`: This functions helps determine the resulting shape of two different tensors once we union them (And when comparing two shapes, we align them from the rightmost dimension.)
+  - For each pair of dimensions, broadcasting is allowed if:
+  1. The dimensions are equal.
+  2. At least one dimension is 1.
+  For the shorter dimension, since we're strating from the rightmost dimension, any missing ones will be padded on the left with 1s. (e.g. (2, 3) and (3,) become (2, 3) and (1, 3))
