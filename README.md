@@ -47,3 +47,5 @@ These are some of the functional changes I did to the original codes because of 
 ### Indexing
 For indexing we want to be able to move around the tensor and fetch our data from the underlying storage.
 - `index_to_position` is about getting a multidimensional index (i.e. (1, 2)) and converting it to a single numerical index that we can use to access that same piece of data but in its position inside the storage of the tensor. So Tensor(1, 2) could map to storage[5].
+- `to_index` does the actual opposite of `index_to_position` and it actually takes an ordinal number and has to transform it back to a multidimensional index.
+[Important note: They're not _exactly_ opposites since `to_index` uses shape, while `index_to_position` uses strides.]

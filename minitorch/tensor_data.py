@@ -59,7 +59,7 @@ def to_index(ordinal: int, shape: Shape, out_index: OutIndex) -> None:
     Args:
         ordinal: ordinal position to convert.
         shape : tensor shape.
-        out_index : return index corresponding to position.
+        out_index : Just a placeholder for the output, return index corresponding to position.
 
     """
 
