@@ -88,7 +88,9 @@ def broadcast_index(
     Returns:
         None
     """
-    idx = -1
+    idx = (
+        -1
+    )  # To start from the right since broadcasting aligns dimensions from the right.
     k = len(shape)
     while k:
         if shape[idx] == 1:

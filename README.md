@@ -60,4 +60,29 @@ Broadcasting in general is about performing an operation between two tensors of 
   - For each pair of dimensions, broadcasting is allowed if:
   1. The dimensions are equal.
   2. At least one dimension is 1.
-  For the shorter dimension, since we're strating from the rightmost dimension, any missing ones will be padded on the left with 1s. (e.g. (2, 3) and (3,) become (2, 3) and (1, 3))
+  For the shorter dimension, since we're strating from the rightmost dimension, any missing ones will be padded on the left with 1s. (e.g. (2, 3) and (3,) become (2, 3) and (1, 3)).
+
+- `broadcast_index`: This function determines which element of an original tensor corresponds to a particular index in the broadcasted result.
+  - For example: Say we want to do -> C[1, 2] = A[1, 2] + B[?] but we can't use [1, 2] with B since it's 1-dimensional. So we need to find what [1, 2] corresponds in B.
+
+#### Putting it all together
+```Python
+C.shape = (2, 3)
+
+for ordinal in range(C.size): # Size = 6 so we go from 0 to 5
+    # Convert ordinal to output tensor index
+    to_index(ordinal, C.shape, c_index)
+
+    # Find corresponding indices in A and B
+    broadcast_index(c_index, C.shape, A.shape, a_index)
+    broadcast_index(c_index, C.shape, B.shape, b_index)
+
+    # Find their physical storage positions
+    a_pos = index_to_position(a_index, A.strides)
+    b_pos = index_to_position(b_index, B.strides)
+
+    # Compute output value
+    C.storage[ordinal] = A.storage[a_pos] + B.storage[b_pos]
+```
+
+### Tensor Operations
