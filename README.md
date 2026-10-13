@@ -51,4 +51,4 @@ For indexing we want to be able to move around the tensor and fetch our data fro
 
 [Important note: They're not _exactly_ opposites since `to_index` uses shape, while `index_to_position` uses strides.]
 
-- `permute`: THe purpose of this function is to rearrange the dimensions of a tensor without rearranging the actual data in storage. It's also a different way of saying _"transposed"_
+- `permute`: THe purpose of this function is to rearrange the dimensions of a tensor without rearranging the actual data in storage. This operation is equivalent to _transposing_ a matrix. When we permute, we generate a new shape and stride for our data. We also change the stride because each stride belongs to a specific dimension. When that dimension moves, its stride must move with it.
