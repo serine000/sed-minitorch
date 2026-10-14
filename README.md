@@ -51,7 +51,7 @@ For indexing we want to be able to move around the tensor and fetch our data fro
 
 [Important note: They're not _exactly_ opposites since `to_index` uses shape, while `index_to_position` uses strides.]
 
-- `permute`: THe purpose of this function is to rearrange the dimensions of a tensor without rearranging the actual data in storage. This operation is equivalent to _transposing_ a matrix. When we permute, we generate a new shape and stride for our data. We also change the stride because each stride belongs to a specific dimension. When that dimension moves, its stride must move with it.
+- `permute`: The purpose of this function is to rearrange the dimensions of a tensor without rearranging the actual data in storage. This operation is equivalent to _transposing_ a matrix. When we permute, we generate a new shape and stride for our data. We also change the stride because each stride belongs to a specific dimension. When that dimension moves, its stride must move with it.
 
 ### Broadcasting
 Broadcasting in general is about performing an operation between two tensors of different shapes. It allows us to perform these operations between differently shaped tensors without explicitly copying or expanding their data.
@@ -70,16 +70,17 @@ Broadcasting in general is about performing an operation between two tensors of 
 C.shape = (2, 3)
 
 for ordinal in range(C.size): # Size = 6 so we go from 0 to 5
-    # Convert ordinal to output tensor index
-    to_index(ordinal, C.shape, c_index)
+    # For each ordinal index -> convert ordinal to output tensor index
+    to_index(ordinal, C.shape, c_index) # Result stored in c_index
 
     # Find corresponding indices in A and B
-    broadcast_index(c_index, C.shape, A.shape, a_index)
-    broadcast_index(c_index, C.shape, B.shape, b_index)
+    # (We're not really using the C.shape input in the function so ignore it)
+    broadcast_index(c_index, C.shape, A.shape, a_index) # c_index -> a_index
+    broadcast_index(c_index, C.shape, B.shape, b_index) # c_index -> b_index
 
     # Find their physical storage positions
-    a_pos = index_to_position(a_index, A.strides)
-    b_pos = index_to_position(b_index, B.strides)
+    a_pos = index_to_position(a_index, A.strides) # a_index -> a_pos storage position
+    b_pos = index_to_position(b_index, B.strides) # b_index -> b_pos storage position
 
     # Compute output value
     C.storage[ordinal] = A.storage[a_pos] + B.storage[b_pos]
