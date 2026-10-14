@@ -257,21 +257,35 @@ def tensor_map(
     """
 
     def _map(
+        # outputs
         out: Storage,
         out_shape: Shape,
         out_strides: Strides,
+        # inputs
         in_storage: Storage,
         in_shape: Shape,
         in_strides: Strides,
     ) -> None:
-        total_output_elements = math.prod(out_shape)
+        total_output_elements = math.prod(out_shape)  # The size of the output tensor
+
+        # preparing placeholders
+        out_index = [0] * len(out_shape)
+        in_index = [0] * len(in_shape)
+
         for elem in range(total_output_elements):
-            out_index = [0] * len(out_shape)
+
+            # ordinal of output tensor to index matching the output shape
             to_index(elem, out_shape, out_index)
-            in_index = [0] * len(in_shape)
+
+            # Map the output index to the corresponding input index,
+            # accounting for broadcasted dimensions.
             broadcast_index(out_index, out_shape, in_shape, in_index)
+
+            # Getting both positions for in_index and out_index
             out_position = index_to_position(out_index, out_strides)
             in_position = index_to_position(in_index, in_strides)
+
+            # Applying function on storage of in_index and storing it in the corresponding position of out at out_position
             out[out_position] = fn(in_storage[in_position])
 
     return _map

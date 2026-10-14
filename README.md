@@ -87,3 +87,24 @@ for ordinal in range(C.size): # Size = 6 so we go from 0 to 5
 ```
 
 ### Tensor Operations
+Tensor operations is about applying higher-order operations to all elements in a tensor simultaneously.
+
+- `tensor_map`: This function allows us to map a function to our tensor with an expected output shape to the result. So not just mapping a function but also broadcasting the input shape to the output shape and filling the output with the corresponding data.
+  - For example:
+  ```Python
+  # Mapping example
+  in_storage = [2, 4, 6]
+  in_shape = (1, 3)
+  in_strides = (3, 1)
+  
+  out_shape = (2, 3)
+  out_strides = (3, 1)
+  
+  fn = lambda x: x + 1
+
+  # Return[3, 5, 7, 3, 5, 7]
+  # We changed the shape to (2, 3) and also applied out fn to get a new output tensor.
+  
+  ```
+
+-
