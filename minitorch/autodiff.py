@@ -91,13 +91,14 @@ def regular_topoligcal_sort(graph):
 def topological_sort_visitor(variable: Variable, stack, visited_nodes):
     """DFS traversal approach for going through the graph."""
 
-    if variable.unique_id in visited_nodes:
+    if variable.unique_id in visited_nodes or variable.is_constant():
         return
 
     visited_nodes.add(variable.unique_id)
 
-    for parent in variable.parents:
-        topological_sort_visitor(parent, stack, visited_nodes)
+    if not variable.is_leaf():
+        for parent in variable.parents:
+            topological_sort_visitor(parent, stack, visited_nodes)
 
     stack.append(variable)
 
