@@ -114,4 +114,17 @@ The main difference is:
 - tensor_map() applies a function to one input tensor.
 - tensor_zip() applies a function to two input tensors, potentially with different shapes and strides.
 
-- `tensor_reduce`:
+- `tensor_reduce`: This function takes multiple input values and combines them into one output value. It follows along the reduced dimension of the input array to know in which direction to apply that function along to.
+
+  - For example:
+  ```Python
+  A.shape = (2, 3)
+  A.stride = (2, 1)
+  A.storage = [1, 2, 3, 4, 5, 6]
+  reduced_dim = 1
+
+  # Reduce to (2, 1) with addition
+  output.shape = (2, 1)
+  output.storage = (6, 15)
+  output.stride = (1, 1)
+  ```
