@@ -107,4 +107,11 @@ Tensor operations is about applying higher-order operations to all elements in a
   
   ```
 
--
+- `tensor_zip`: This functions does the same thing as map but by also applying that function on two inputs tensors instead of one. Other than that, we apply the same steps from ordinal -> output index -> input index -> position for each tensor -> apply function.
+
+
+The main difference is:
+- tensor_map() applies a function to one input tensor.
+- tensor_zip() applies a function to two input tensors, potentially with different shapes and strides.
+
+- `tensor_reduce`:
