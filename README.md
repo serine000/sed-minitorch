@@ -128,3 +128,5 @@ The main difference is:
   output.storage = (6, 15)
   output.stride = (1, 1)
   ```
+
+## Cuda & Co
