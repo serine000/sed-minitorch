@@ -129,4 +129,4 @@ The main difference is:
   output.stride = (1, 1)
   ```
 
-## Cuda & Co
+## Python, Numba & CUDA
