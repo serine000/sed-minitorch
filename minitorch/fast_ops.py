@@ -222,8 +222,42 @@ def tensor_zip(
         b_shape: Shape,
         b_strides: Strides,
     ) -> None:
-        # TODO: Implement for Task 3.1.
-        raise NotImplementedError("Need to implement for Task 3.1")
+        # Very similar logic to zip but now with two input tensors
+        total_output_elements = math.prod(out_shape)
+
+        a_aligned = np.array_equal(out_shape, a_shape) and np.array_equal(
+            out_strides, a_strides
+        )
+
+        b_aligned = np.array_equal(out_shape, b_shape) and np.array_equal(
+            out_strides, b_strides
+        )
+
+        aligned = a_aligned and b_aligned
+
+        for elem in prange(total_output_elements):
+
+            if aligned:
+                out[elem] = fn(a_storage[elem], b_storage[elem])
+            else:
+                # prepping placeholders
+                out_index = np.empty(len(out_shape), dtype=np.int32)
+                in_index_a = np.empty(len(a_shape), dtype=np.int32)
+                in_index_b = np.empty(len(b_shape), dtype=np.int32)
+
+                to_index(elem, out_shape, out_index)
+
+                # Finding out out_index mapping to input tensors (A & B) mappings
+                broadcast_index(out_index, out_shape, a_shape, in_index_a)
+                broadcast_index(out_index, out_shape, b_shape, in_index_b)
+
+                # Fetching storage positions
+                out_position = index_to_position(out_index, out_strides)
+                a_pos = index_to_position(in_index_a, a_strides)
+                b_pos = index_to_position(in_index_b, b_strides)
+
+                # Applying function
+                out[out_position] = fn(a_storage[a_pos], b_storage[b_pos])
 
     return njit(parallel=True)(_zip)  # type: ignore
 
