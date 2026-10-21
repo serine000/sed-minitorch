@@ -1,12 +1,12 @@
 from __future__ import annotations
 
+import math
 from typing import TYPE_CHECKING
 
 import numpy as np
 from numba import njit, prange
 
 from .tensor_data import (
-    MAX_DIMS,
     broadcast_index,
     index_to_position,
     shape_broadcast,
@@ -15,10 +15,10 @@ from .tensor_data import (
 from .tensor_ops import MapProto, TensorOps
 
 if TYPE_CHECKING:
-    from typing import Callable, Optional
+    from collections.abc import Callable
 
     from .tensor import Tensor
-    from .tensor_data import Index, Shape, Storage, Strides
+    from .tensor_data import Shape, Storage, Strides
 
 # TIP: Use `NUMBA_DISABLE_JIT=1 pytest tests/ -m task3_1` to run these tests without JIT.
 
@@ -38,7 +38,7 @@ class FastOps(TensorOps):
         # This line JIT compiles your tensor_map
         f = tensor_map(njit()(fn))
 
-        def ret(a: Tensor, out: Optional[Tensor] = None) -> Tensor:
+        def ret(a: Tensor, out: Tensor | None = None) -> Tensor:
             if out is None:
                 out = a.zeros(a.shape)
             f(*out.tuple(), *a.tuple())
@@ -159,8 +159,32 @@ def tensor_map(
         in_shape: Shape,
         in_strides: Strides,
     ) -> None:
-        # TODO: Implement for Task 3.1.
-        raise NotImplementedError('Need to implement for Task 3.1')
+        total_output_elements = math.prod(out_shape)  # The size of the output tensor
+        aligned = (np.array_equal(out_shape, in_shape)) and (
+            np.array_equal(out_strides, in_strides)
+        )
+
+        for elem in prange(total_output_elements):
+            if aligned:
+                out[elem] = fn(in_storage[elem])
+            else:
+                # preparing placeholders
+                out_index = np.empty(len(out_shape), dtype=np.int32)
+                in_index = np.empty(len(in_shape), dtype=np.int32)
+
+                # ordinal of output tensor to index matching the output shape
+                to_index(elem, out_shape, out_index)
+
+                # Map the output index to the corresponding input index,
+                # accounting for broadcasted dimensions.
+                broadcast_index(out_index, out_shape, in_shape, in_index)
+
+                # Getting both positions for in_index and out_index
+                out_position = index_to_position(out_index, out_strides)
+                in_position = index_to_position(in_index, in_strides)
+
+                # Applying function on storage of in_index and storing it in the corresponding position of out at out_position
+                out[out_position] = fn(in_storage[in_position])
 
     return njit(parallel=True)(_map)  # type: ignore
 
@@ -199,7 +223,7 @@ def tensor_zip(
         b_strides: Strides,
     ) -> None:
         # TODO: Implement for Task 3.1.
-        raise NotImplementedError('Need to implement for Task 3.1')
+        raise NotImplementedError("Need to implement for Task 3.1")
 
     return njit(parallel=True)(_zip)  # type: ignore
 
@@ -233,7 +257,7 @@ def tensor_reduce(
         reduce_dim: int,
     ) -> None:
         # TODO: Implement for Task 3.1.
-        raise NotImplementedError('Need to implement for Task 3.1')
+        raise NotImplementedError("Need to implement for Task 3.1")
 
     return njit(parallel=True)(_reduce)  # type: ignore
 
@@ -283,7 +307,7 @@ def _tensor_matrix_multiply(
     b_batch_stride = b_strides[0] if b_shape[0] > 1 else 0
 
     # TODO: Implement for Task 3.2.
-    raise NotImplementedError('Need to implement for Task 3.2')
+    raise NotImplementedError("Need to implement for Task 3.2")
 
 
 tensor_matrix_multiply = njit(parallel=True, fastmath=True)(_tensor_matrix_multiply)
