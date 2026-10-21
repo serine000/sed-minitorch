@@ -290,8 +290,28 @@ def tensor_reduce(
         a_strides: Strides,
         reduce_dim: int,
     ) -> None:
-        # TODO: Implement for Task 3.1.
-        raise NotImplementedError("Need to implement for Task 3.1")
+
+        total_output_elements = math.prod(out_shape)
+
+        for elem in prange(total_output_elements):
+
+        out_index = np.empty(len(out_shape), dtype=np.int32)
+        a_index = np.empty(len(a_shape), dtype=np.int32)
+
+        # Fixed for that ordinal
+        to_index(elem, out_shape, out_index)
+        # Fix a_index at the start of out_index and let it expand in the inner loop.
+        a_index = out_index[:]
+        # Output position (also fixed)
+        out_position = index_to_position(out_index, out_strides)
+
+        for i in range(a_shape[reduce_dim]):
+            # Iterating over the reduced dim of out input tensor
+            a_index[reduce_dim] = i
+            a_pos = index_to_position(a_index, a_strides)
+
+            # Applying function
+            out[out_position] = fn(out[out_position], a_storage[a_pos])
 
     return njit(parallel=True)(_reduce)  # type: ignore
 
